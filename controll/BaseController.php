@@ -1,9 +1,13 @@
 <?php
 class BaseController{
+	
 	public $module;
 	public $controller;
 	public $action;
+	
 	public $aGPArr = array();
+	
+	public $sLogPath;
 	
 	public function __construct($module,$controller,$action){
 		
@@ -50,7 +54,10 @@ class BaseController{
 	}
 	
 	public function initLog(){
-		
+		$this->sLogPath = ROOT_PATH.'/'.'log'.'/'.date('Ym',time()).'/'.date('Ymd').'.log';
+		if(!file_exists($this->sLogPath)){
+			
+		}
 	}
 	public function recordLog(){
 	
