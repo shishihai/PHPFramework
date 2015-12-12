@@ -22,25 +22,37 @@ class BaseController{
 	public function getVal($param,$type='string'){
 		if(is_array($param)){
 			foreach ($param as $key){
-				$this->CVal($key, $type);
+				$this->filterVal($key, $type);
 			}
 		}else{
-			$this->CVal($key, $type);
+			$this->filterVal($key, $type);
 		}
 	}
 	
-	public function CVal($key,$type){
+	public function filterVal($key,$type){
 		switch ($type){
 			case 'string':
+				$this->aGPArr[$key] = isset($this->aGPArr[$key])? htmlspecialchars(trim($this->aGPArr[$key]),ENT_QUOTES):'';
 				break;
 			case 'int':
+				$this->aGPArr[$key] = isset($this->aGPArr[$key])? intval(trim($this->aGPArr[$key])):'';
 				break;
 			case 'bigint':
+				$this->aGPArr[$key] = isset($this->aGPArr[$key])? (string)doubleval(trim($this->aGPArr[$key])):'';
 				break;
 			case 'none':
+				$this->aGPArr[$key] = isset($this->aGPArr[$key])? trim($this->aGPArr[$key]):'';
 				break;
 			default:
+				$this->aGPArr[$key] = isset($this->aGPArr[$key])? trim($this->aGPArr[$key]):'';
 				break;
 		}
+	}
+	
+	public function initLog(){
+		
+	}
+	public function recordLog(){
+	
 	}
 }
