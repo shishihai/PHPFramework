@@ -1,18 +1,19 @@
 <?php
-//**********************************************************
-// Create date: 2015/12/12								  //
-// Author: scottshi										  //							
-// Description: 所有请求入口； 请求转发到index.php上			  //
-// Example:	http://a.qq.com/model/controller/action/?a=xx //
-//**********************************************************
+//********************************************************************
+// 						Create date: 2015/12/12								  //
+// 								Author: scottshi										  //							
+// 				Description: Entrance of framework			  			  //
+// Example:	http://a.qq.com/model/controller/action/?a=xx   //
+//********************************************************************
 
 define("ROOT_PATH",realpath(dirname(__FILE__)));
 require_once '/include/logic/functions.inc.php';
+require_once '/cfg/common.cfg.php';
 
-//设置时区
+//set timeZone
 date_default_timezone_set('Asia/Shanghai');
 
-//自动载入需要的类库文件
+//autoload the class
 function __autoload($class){
 	
 	if(class_exists($class,false) || interface_exists($class,false)){
@@ -49,10 +50,10 @@ function __autoload($class){
 	}
 }
 
-//定义程序分发逻辑
+//framework dispatcher definition
 function run_framework_dispatcher(){
 	
-	//获取请求路径
+	//check path info
 	if (isset($_SERVER['PATH_INFO'])) {
 		$path = $_SERVER['PATH_INFO'];
 	} else {
@@ -65,13 +66,13 @@ function run_framework_dispatcher(){
 	}
 	$request_uri = explode('/', trim($path, '/'));
 	
-	//配置controll目录下可访问的module白名单
+	//initialize module whitelist
 	$aModuleWhiteList = array('app','api');
 	if(empty($request_uri) || count($request_uri) < 2 || !in_array($request_uri[0], $aModuleWhiteList)){
 		show_default_404();
 	}
 	
-	//获取Module、Controller和Action值
+	//extract the module,controller and action parameters
 	$sModule = htmlspecialchars(trim($request_uri[0]),ENT_QUOTES);
 	$sController = htmlspecialchars(trim($request_uri[1]),ENT_QUOTES);
 	$sAction = isset($request_uri[2])? htmlspecialchars(trim($request_uri[2]),ENT_QUOTES):'index';
@@ -81,20 +82,20 @@ function run_framework_dispatcher(){
 	
 	$sCtrlClassFilePath = ROOT_PATH.'/'.$sModule.'/'.$sControllerClass.'.php';
 	if(file_exists($sCtrlClassFilePath)){
-		//引入当前请求controller文件
+		//require basecontroller and modulecontroller
 		require_once ROOT_PATH.'/controll/BaseController.php';
 		require_once ROOT_PATH.'/'.$sModule.'/'.strtoupper($sModule).'Controller.php';
 		require_once $sCtrlClassFilePath;
-		//检测类是否存在
+		//check exist of controller class
 		if(!class_exists($sControllerClass)){
 			show_default_404();
 		}
 		$oContrller = new $sControllerClass($sModule,strtolower($sController),$sAction);
-		//检测方法是否存在
+		//check exist of method
 		if(!method_exists($oContrller, $sActionMethod)){
 			show_default_404();
 		}
-		//调用指定类的指定方法
+		//invoke the specific method defined in the controller class
 		try {
 			$oContrller->$sActionMethod();
 		} catch (Exception $e) {
@@ -110,7 +111,7 @@ function show_default_404(){
 	echo '404 Not Fuound';
 	exit();
 }
-//执行分发操作
+//start to run framework dispatcherss
 run_framework_dispatcher();
 
 
