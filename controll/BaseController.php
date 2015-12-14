@@ -67,26 +67,5 @@ class BaseController{
 		}
 	}
 	
-	/**
-	 * @author scottshi
-	 * @desc record log with log info and log level
-	 * @param string $sMsg
-	 * @param int $sLevel
-	 * @date 2015-12-13
-	 */
-	public function recordLog($sMsg,$sLevel=ERRORLOG){
-		try {
-			$this->sLogPath = ROOT_PATH.'/'.'log'.'/'.date('Ym',time()).'/'.date('Ymd').'.log';
-			if(! ($file = fopen($this->sLogPath, 'a+'))){
-				echo 'Unable to open log file';
-				exit();
-			}
-			$sLogInfo =date('Y-m-d H:i:s').'|'. GetClientIp().'|'.$sLevel.'|'.$sMsg.'\n';
-			fwrite($file, $sLogInfo);
-			fclose($file);
-		} catch (Exception $e) {
-			echo 'Unexpected error in recordLog';
-			exit();
-		}	
-	}
+	
 }

@@ -1,4 +1,24 @@
 <?php
+
+function loadConfig($item = 'common'){
+	$sPath = ROOT_PATH.'/cfg/';
+	if(file_exists($sPath.$item.'.cfg.php')){
+		require $sPath.$item.'.cfg.php';		
+	}else{
+		require $sPath.'common.cfg.php';	
+	}
+	return $G_CONFIG[$item];
+}
+
+/**
+ * @author scottshi
+ * @desc check the current environment in the context
+ * @date 2015-12-14
+ */
+function isTestEnv(){
+	return false;
+}
+
 function GBK2UTF8($str)
 {
 	if (is_array($str)) {
@@ -58,4 +78,50 @@ function longToIp($str){
 
 function redirectURL($sURL){
 	header("Location:{$sURL}");
+}
+
+/**
+ * @author scottshi
+ * @desc record log with log info and log level
+ * @param string $sMsg
+ * @param int $sLevel
+ * @date 2015-12-13
+ */
+function recordUserLog($sMsg,$sLevel=ERRORLOG){
+	try {
+		$this->sLogPath = ROOT_PATH.'/log/user/'.date('Ym',time()).'/'.date('Ymd').'.log';
+		if(! ($file = fopen($this->sLogPath, 'a+'))){
+			echo 'Unable to open log file';
+			exit();
+		}
+		$sLogInfo =date('Y-m-d H:i:s').'|'. GetClientIp().'|'.$sLevel.'|'.$sMsg.'\n';
+		fwrite($file, $sLogInfo);
+		fclose($file);
+	} catch (Exception $e) {
+		echo 'Unexpected error in recordLog';
+		exit();
+	}	
+}
+
+/**
+ * @author scottshi
+ * @desc record log with log info and log level
+ * @param string $sMsg
+ * @param int $sLevel
+ * @date 2015-12-13
+ */
+function recordSysLog($sMsg,$sLevel=ERRORLOG){
+	try {
+		$this->sLogPath = ROOT_PATH.'/log/sys/'.date('Ym',time()).'/'.date('Ymd').'.log';
+		if(! ($file = fopen($this->sLogPath, 'a+'))){
+			echo 'Unable to open log file';
+			exit();
+		}
+		$sLogInfo =date('Y-m-d H:i:s').'|'.$sLevel.'|'.$sMsg.'\n';
+		fwrite($file, $sLogInfo);
+		fclose($file);
+	} catch (Exception $e) {
+		echo 'Unexpected error in recordLog';
+		exit();
+	}	
 }
